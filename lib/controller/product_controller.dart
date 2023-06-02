@@ -1,22 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ProductController extends GetxController{
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final CollectionReference collection = FirebaseFirestore.instance.collection('category');
+import '../model/product_model .dart';
 
-  
-  RxList<DocumentSnapshot> documents = RxList<DocumentSnapshot>();
+class ProductController extends GetxController {
+  final CollectionReference productCollection =
+      FirebaseFirestore.instance.collection('products');
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchData();
-  }
+  RxList<Product> products = <Product>[].obs;
 
-  void fetchData() {
-    collection.snapshots().listen((QuerySnapshot snapshot) {
-      documents.value = snapshot.docs;
-    });
+  void fetchProductsByCategoryId(String categoryId) async {
+    final querySnapshot = await productCollection
+        .where('category', isEqualTo: categoryId)
+        .get();
+    products.value = querySnapshot.docs.map((doc) {
+      return Product(
+        id: doc.id,
+        name: doc['name'],
+        price: doc['price'].toDouble(),
+        imageUrl: doc['image'],
+      );
+    }).toList();
   }
 }

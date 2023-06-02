@@ -1,11 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/const/appconstants.dart';
-import 'package:get_it/controller/product_controller.dart';
+import 'package:get_it/controller/category_controller.dart';
+import 'package:get_it/view/detail_page.dart';
+
+import '../model/category_model.dart';
 
 class ProductHome extends StatelessWidget {
   ProductHome({super.key});
-  final productController = Get.put(ProductController());
+  // final productController = Get.put(ProductController());
+  final CategoryController categoryController = Get.put(CategoryController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,40 +100,50 @@ class ProductHome extends StatelessWidget {
               SizedBox(
                   height: Appconstants.height(context) * 0.3,
                   child: Obx(
-                    () => productController.documents.isEmpty
+                    () => categoryController.categories.isEmpty
                         ? const Center(
                             child: Text('Loading...'),
                           )
                         : GridView.builder(
-                          primary: false,
-                            itemCount: productController.documents.length,
+                            primary: false,
+                            itemCount: categoryController.categories.length,
                             itemBuilder: (context, index) {
-                              Map<String, dynamic> data =
-                                  productController.documents[index].data()
-                                      as Map<String, dynamic>;
-                              return Column(
-                                children: [
-                                  Container(
-                                    height: Appconstants.height(context) * 0.11,
-                                    width: Appconstants.width(context) * 0.19,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                          image: NetworkImage(data['image']),
-                                          fit: BoxFit.fill),
+                              final Category category =
+                                  categoryController.categories[index];
+                              return InkWell(
+                                onTap: () {
+                                  log(category.toString());
+
+                                  Get.to(() => DetailPage(
+                                        category: category,
+                                      ));
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height:
+                                          Appconstants.height(context) * 0.11,
+                                      width: Appconstants.width(context) * 0.19,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            image: NetworkImage(category.image),
+                                            fit: BoxFit.fill),
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    data['name'],  overflow: TextOverflow.ellipsis,
-  maxLines: 1,
-                                    style: TextStyle(fontSize: 13),
-                                  )
-                                ],
+                                    Text(
+                                      category.title,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: const TextStyle(fontSize: 13),
+                                    )
+                                  ],
+                                ),
                               );
                             },
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4,
                               childAspectRatio: 0.9,
                             ),
@@ -156,25 +173,26 @@ class ProductHome extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 3.0),
-                          child: Container(
-                            height: Appconstants.height(context) * 0.11,
-                            width: Appconstants.width(context) * 0.19,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(50),
-                              image: const DecorationImage(
-                                  image: AssetImage('assets/images/bread.png'),
-                                  fit: BoxFit.fill),
+                          child: InkWell(
+                            onTap: () {},
+                            child: Container(
+                              height: Appconstants.height(context) * 0.11,
+                              width: Appconstants.width(context) * 0.19,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(50),
+                                image: const DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/bread.png'),
+                                    fit: BoxFit.fill),
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 100,
-                          height: 20,
-                          child: const Text(
-                            'Bread&',overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13),
-                          ),
+                        const Text(
+                          'Bread&',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 13),
                         )
                       ],
                     );
