@@ -17,6 +17,7 @@ class DetailPage extends StatelessWidget {
       productController.fetchProductsByCategoryId(category.id);
     });
     return Scaffold(
+      appBar: AppBar(title: Text('Products'),),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child:Obx(() =>productController.products.isNotEmpty? GridView.builder(

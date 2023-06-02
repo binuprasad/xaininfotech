@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -21,5 +23,6 @@ class ProductController extends GetxController {
         imageUrl: doc['image'],
       );
     }).toList();
+    log(querySnapshot.toString());
   }
 }
